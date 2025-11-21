@@ -1,0 +1,12 @@
+[kafka]
+bootstrap_servers = "localhost:9092"
+group_id = "robot-ingress"
+topics = ["robot-heartbeat", "robot-status", "robot-position"]
+auto_offset_reset = "earliest"
+
+[timeseries]
+host = "localhost"
+port = 5435
+user = "dk"
+password = "1234"
+dbname = "robot_stat_db"
