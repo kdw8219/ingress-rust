@@ -10,12 +10,22 @@ pub struct KafkaConfig {
 }
 
 #[derive(Deserialize, Debug)]
+pub struct TimeSeriesConfig {
+    pub host: String,
+    pub port: String,
+    pub user: String,
+    pub password: String,
+    pub dbname: String,
+}
+
+#[derive(Deserialize, Debug)]
 pub struct Settings {
     pub kafka: KafkaConfig,
+    pub timeseries: TimeSeriesConfig,
 }
 
 pub fn load_settings() -> Settings {
-    Config::builder().add_source(ConfigFile::with_name("config/default"))
+    Config::builder().add_source(ConfigFile::with_name("config/default").required(true))
     .build()
     .unwrap()
     .try_deserialize()
