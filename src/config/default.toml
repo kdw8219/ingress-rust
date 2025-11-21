@@ -1,5 +1,0 @@
-[kafka]
-bootstrap_servers = "localhost:9092"
-group_id = "robot-ingest"
-topics = ["robot_heartbeat", "robot_status", "robot_position"]
-auto_offset_reset = "earliest"
