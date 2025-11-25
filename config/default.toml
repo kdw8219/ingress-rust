@@ -6,7 +6,7 @@ auto_offset_reset = "earliest"
 
 [timeseries]
 host = "localhost"
-port = 5435
+port = 5432
 user = "dk"
 password = "1234"
 dbname = "robot_stat_db"
