@@ -36,19 +36,20 @@ impl TimescaleHandler {
     }
 
     pub async fn insert_heartbeat(&self, hb:heartbeat::Heartbeat) -> Result<()> {
+        println!("start to insert heartbeat");
         //heart beat은 batch insert 하면 안된다.
         sqlx::query(
             r#"
-            INSERT INTO robot_heartbeat (robot_id, is_alive, ts)
+            INSERT INTO robot_heartbeat (robot_id, is_alive, timestamp)
             VALUES ($1, $2, $3)
             "#
         )
         .bind(&hb.robot_id)
         .bind(hb.is_alive)
-        .bind(hb.ts)
+        .bind(hb.timestamp)
         .execute(&self.pool)
         .await?;
-
+        println!("End to insert heartbeat");
         Ok(())
     }
 
