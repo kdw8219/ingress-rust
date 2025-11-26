@@ -29,11 +29,15 @@ impl DataHandler {
                                                 .unwrap_or_default();
 
             println!("topic: {}", topic);
+            println!("data: {}", data);
 
             //topic 기준으로 데이터 쪼개기
-            if(topic == "") {
+            if topic == "robot-heartbeat" {
+                println!("previously insert heartbeat");
                 let hb: heartbeat::Heartbeat = serde_json::from_str(&data)?;
+                println!("try to insert heartbeat");
                 self.timescale_handler.insert_heartbeat(hb).await;
+                println!("end to insert heartbeat");
             }
             else {
                 println!("Unsupported topic: {}", topic);            
