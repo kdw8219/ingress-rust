@@ -3,6 +3,8 @@ use anyhow::Result;
 
 use crate::domain::heartbeat;
 use crate::config::configs::TimeSeriesConfig;
+use chrono::{DateTime, Utc};
+
 
 pub struct TimescaleHandler {
     pool: Pool<Postgres>
@@ -37,8 +39,14 @@ impl TimescaleHandler {
 
     pub async fn insert_heartbeat(&self, hb:heartbeat::Heartbeat) -> Result<()> {
         println!("start to insert heartbeat");
+
+        let naive = chrono::NaiveDateTime::parse_from_str(
+            &hb.timestamp,
+            "%Y-%m-%dT%H:%M:%S%.f",
+        )?;
+        let ts: chrono::DateTime<chrono::Utc> = chrono::DateTime::<Utc>::from_utc(naive, Utc);
         //heart beat은 batch insert 하면 안된다.
-        sqlx::query(
+        if let Err(e) = sqlx::query(
             r#"
             INSERT INTO robot_heartbeat (robot_id, is_alive, timestamp)
             VALUES ($1, $2, $3)
@@ -46,9 +54,13 @@ impl TimescaleHandler {
         )
         .bind(&hb.robot_id)
         .bind(hb.is_alive)
-        .bind(hb.timestamp)
+        .bind(ts)
         .execute(&self.pool)
-        .await?;
+        .await
+        {
+            eprintln!("❌ Insert failed but ignored: {:?}", e);
+        }
+
         println!("End to insert heartbeat");
         Ok(())
     }
